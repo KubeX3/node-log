@@ -1,0 +1,32 @@
+{
+  "name": "log",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Lahiru De Silva",
+  "license": "Apache License",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "typescript",
+    "javascript",
+    "logs"
+  ],
+  "homepage": "https://github.com/KubeX3/node-log#readme",
+  "bugs": {
+    "url": "https://github.com/KubeX3/node-log/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KubeX3/node-log.git"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "eslint": "^10.1.0",
+    "prettier": "^3.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}
