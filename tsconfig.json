@@ -1,27 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES2023",
+    "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
     "moduleDetection": "force",
-    
-    /* Explicitly set rootDir to fix your error */
-    "rootDir": "./src", 
+
+    "rootDir": "./", 
     "outDir": "./dist",
 
-    /* Modern Path Mapping (No baseUrl needed) */
     "paths": {
       "@/*": ["./src/*"]
     },
 
-    /* Standards & Interop */
-    "allowImportingTsExtensions": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "sourceMap": true,
+    "sourceMap": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/types/*.d.ts"],
+  "include": ["src/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules"],
 }
