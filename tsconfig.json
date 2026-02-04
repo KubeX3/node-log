@@ -2,15 +2,19 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "moduleDetection": "force",
 
     "rootDir": "./", 
     "outDir": "./dist",
+    "declaration": true,
+    "emitDeclarationOnly": true,
 
     "paths": {
       "@/*": ["./src/*"]
     },
+
+    "types": ["jest", "node"], 
 
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -19,5 +23,5 @@
     "sourceMap": true
   },
   "include": ["src/**/*.ts", "test/**/*.ts"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }
