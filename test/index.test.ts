@@ -1,94 +1,193 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import {
+  jest,
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+} from "@jest/globals";
+import { promises as fs } from "fs";
 import {
   logError,
   logWarning,
   logInfo,
   logAudit,
   logEvent,
-} from "../src/index"; // Adjust path
-import { LogTypesEnum } from "../src/utils/enums/log-types.enum";
+} from "../src/index";
+
+// Constants for asserting correct ANSI outputs
+const colors = {
+  RED: "\x1b[31m",
+  YELLOW: "\x1b[33m",
+  GREEN: "\x1b[32m",
+  CYAN: "\x1b[36m",
+  MAGENTA: "\x1b[35m",
+  RESET: "\x1b[0m",
+};
 
 describe("Logger Utility", () => {
-  // Mock the Date to ensure consistent timestamps in tests
-  const mockDate = new Date("2026-03-27T10:00:00");
+  let consoleLogSpy: any;
+  let consoleErrorSpy: any;
+  let mkdirSpy: any;
+  let appendFileSpy: any;
+
+  // Helper to flush asynchronous tasks
+  const flushPromises = () => new Promise(process.nextTick);
 
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(mockDate);
-    vi.spyOn(console, "log").mockImplementation(() => {});
+    jest.clearAllMocks();
+
+    mkdirSpy = jest.spyOn(fs, "mkdir").mockResolvedValue(undefined as any);
+    appendFileSpy = jest
+      .spyOn(fs, "appendFile")
+      .mockResolvedValue(undefined as any);
+    consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    // REMOVED: jest.useFakeTimers() and jest.setSystemTime()
   });
 
   afterEach(() => {
-    vi.useRealTimers();
-    vi.restoreAllMocks();
+    // REMOVED: jest.useRealTimers()
+
+    // Safely restore spies
+    if (mkdirSpy) mkdirSpy.mockRestore();
+    if (appendFileSpy) appendFileSpy.mockRestore();
+    if (consoleLogSpy) consoleLogSpy.mockRestore();
+    if (consoleErrorSpy) consoleErrorSpy.mockRestore();
   });
 
-  const expectedTimestamp = "\x1b[32m[2026/03/27 - 10:00:00]\x1b[0m";
+  const dateRegex = /\[\d{4}-\d{2}-\d{2} - \d{2}:\d{2}:\d{2}\]/;
 
-  it("should log an error with the correct format and color", () => {
-    logError("Database failed", "AuthService");
+  describe("Formatting and Output Logs", () => {
+    it("should correctly log an ERROR without a location", async () => {
+      logError("Database connection failed");
+      await flushPromises();
 
-    expect(console.log).toHaveBeenCalledWith(
-      "%s %s[%s]%s%s - %s",
-      expectedTimestamp,
-      "\x1b[31m", // RED
-      LogTypesEnum.ERROR,
-      " - [AuthService]",
-      "\x1b[0m", // RESET
-      "Database failed",
-    );
+      const expectedUncolored = expect.stringMatching(
+        new RegExp(
+          `^${dateRegex.source} \\[ERROR\\] - Database connection failed\\n$`,
+        ),
+      );
+
+      // We use expect.any(String) so it works regardless of your local .env paths
+      expect(mkdirSpy).toHaveBeenCalledWith(expect.any(String), {
+        recursive: true,
+      });
+      expect(appendFileSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expectedUncolored,
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining(`${colors.RED}[ERROR]`),
+      );
+    });
+
+    it("should correctly log a WARNING with a location", async () => {
+      logWarning("Disk space low", "SystemMonitor");
+      await flushPromises();
+
+      const expectedUncolored = expect.stringMatching(
+        new RegExp(
+          `^${dateRegex.source} \\[WARNING\\]\\t - \\[SystemMonitor\\] - Disk space low\\n$`,
+        ),
+      );
+
+      expect(appendFileSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expectedUncolored,
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining(`${colors.YELLOW}[WARNING]`),
+      );
+    });
+
+    it("should correctly log an INFO message", async () => {
+      logInfo("Server started successfully");
+      await flushPromises();
+
+      const expectedUncolored = expect.stringMatching(
+        new RegExp(
+          `^${dateRegex.source} \\[INFO\\] - Server started successfully\\n$`,
+        ),
+      );
+
+      expect(appendFileSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expectedUncolored,
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining(`${colors.GREEN}[INFO]`),
+      );
+    });
+
+    it("should correctly log an AUDIT message with a location", async () => {
+      logAudit("User changed password", "AuthService");
+      await flushPromises();
+
+      const expectedUncolored = expect.stringMatching(
+        new RegExp(
+          `^${dateRegex.source} \\[AUDIT\\]\\t - \\[AuthService\\] - User changed password\\n$`,
+        ),
+      );
+
+      expect(appendFileSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expectedUncolored,
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining(`${colors.CYAN}[AUDIT]`),
+      );
+    });
+
+    it("should correctly log an EVENT message", async () => {
+      logEvent("Scheduled task executed");
+      await flushPromises();
+
+      const expectedUncolored = expect.stringMatching(
+        new RegExp(
+          `^${dateRegex.source} \\[EVENT\\] - Scheduled task executed\\n$`,
+        ),
+      );
+
+      expect(appendFileSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expectedUncolored,
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining(`${colors.MAGENTA}[EVENT]`),
+      );
+    });
   });
 
-  it("should log a warning without a location", () => {
-    logWarning("Low disk space");
+  describe("File System Error Handling (logFile)", () => {
+    it("should catch and log an error if fs.mkdir fails, but still execute console.log", async () => {
+      const mockError = new Error("Permission denied");
+      mkdirSpy.mockRejectedValueOnce(mockError);
 
-    expect(console.log).toHaveBeenCalledWith(
-      "%s %s[%s]%s%s - %s",
-      expectedTimestamp,
-      "\x1b[33m", // YELLOW
-      LogTypesEnum.WARNING,
-      "", // No location
-      "\x1b[0m",
-      "Low disk space",
-    );
-  });
+      logInfo("Test message");
+      await flushPromises();
 
-  it("should log info messages in green", () => {
-    logInfo("User logged in");
-    expect(console.log).toHaveBeenCalledWith(
-      "%s %s[%s]%s%s - %s", // The format string
-      expectedTimestamp,
-      "\x1b[32m",           // GREEN
-      LogTypesEnum.INFO,
-      "",                   // The empty location string
-      "\x1b[0m",            // RESET
-      "User logged in",
-    );
-  });
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Error handling file operation:",
+        mockError,
+      );
+      expect(consoleLogSpy).toHaveBeenCalled();
+      expect(appendFileSpy).not.toHaveBeenCalled();
+    });
 
-  it("should log audit messages in cyan", () => {
-    logAudit("File deleted");
-    expect(console.log).toHaveBeenCalledWith(
-      "%s %s[%s]%s%s - %s",
-      expectedTimestamp,
-      "\x1b[36m",           // CYAN
-      LogTypesEnum.AUDIT,
-      "",
-      "\x1b[0m",
-      "File deleted",
-    );
-  });
+    it("should catch and log an error if fs.appendFile fails, but still execute console.log", async () => {
+      const mockError = new Error("Disk full");
+      appendFileSpy.mockRejectedValueOnce(mockError);
 
-  it("should log event messages in magenta", () => {
-    logEvent("Button clicked");
-    expect(console.log).toHaveBeenCalledWith(
-      "%s %s[%s]%s%s - %s",
-      expectedTimestamp,
-      "\x1b[35m",           // MAGENTA
-      LogTypesEnum.EVENT,
-      "",
-      "\x1b[0m",
-      "Button clicked",
-    );
+      logInfo("Test message");
+      await flushPromises();
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Error handling file operation:",
+        mockError,
+      );
+      expect(consoleLogSpy).toHaveBeenCalled();
+    });
   });
 });
