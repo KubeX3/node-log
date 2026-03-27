@@ -1,8 +1,9 @@
 # 📝 Node-Log 
 
-[![npm version](https://img.shields.io/npm/v/node-log.svg)]()
+[![npm version](https://img.shields.io/npm/v/@kubex3/node-log.svg)](https://www.npmjs.com/package/@kubex3/node-log) 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/KubeX3/node-log/ci.yml?branch=main)](https://github.com/KubeX3/node-log/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/KubeX3/node-log/ci.yml?branch=main)](https://github.com/KubeX3/node-log/actions/workflows/publish.yml)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/KubeX3/node-log/ci.yml?branch=main)](https://github.com/KubeX3/node-log/actions/workflows/ci.yml)
 
 A high-performance TypeScript logging utility for modern Node.js (ESM) applications. It automatically manages directory creation and generates structured `.log` files with both ANSI-colored console output and clean, plain-text file persistence.
 
@@ -22,7 +23,7 @@ A high-performance TypeScript logging utility for modern Node.js (ESM) applicati
 Install the package via npm:
 
 ```bash
-npm install 
+npm i @kubex3/node-log
 ```
 
 ---
