@@ -5,12 +5,13 @@ import { LogTypesEnum } from "./utils/enums/log-types.enum";
 
 // ANSI color codes
 const colors = {
+  RESET: "\x1b[0m",
   RED: "\x1b[31m",
   YELLOW: "\x1b[33m",
   GREEN: "\x1b[32m",
   CYAN: "\x1b[36m",
   MAGENTA: "\x1b[35m",
-  RESET: "\x1b[0m",
+  GRAY: "\x1b[90m",
 };
 
 /**
@@ -46,31 +47,31 @@ function getFormattedDateTime(): string {
 
 // All log functions become regular functions (no async)
 function logError(message: string, location?: string): void {
-  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.RED}[${LogTypesEnum.ERROR}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.RED}[${LogTypesEnum.ERROR}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
   const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.ERROR}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
 
 function logWarning(message: string, location?: string): void {
-  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.YELLOW}[${LogTypesEnum.WARNING}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.YELLOW}[${LogTypesEnum.WARNING}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
   const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.WARNING}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
 
 function logInfo(message: string, location?: string): void {
-  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.GREEN}[${LogTypesEnum.INFO}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.GREEN}[${LogTypesEnum.INFO}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
   const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.INFO}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
 
 function logAudit(message: string, location?: string): void {
-  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.CYAN}[${LogTypesEnum.AUDIT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.CYAN}[${LogTypesEnum.AUDIT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
   const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.AUDIT}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
 
 function logEvent(message: string, location?: string): void {
-  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.MAGENTA}[${LogTypesEnum.EVENT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.MAGENTA}[${LogTypesEnum.EVENT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
   const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.EVENT}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
