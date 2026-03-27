@@ -20,5 +20,6 @@ console.log(
 );
 
 export const DOTENV = {
+  LOG_ENABLED: process.env.LOG_ENABLED === undefined ? true : process.env.LOG_ENABLED === "true",
   LOG_FILE_PATH: process.env.LOG_FILE_PATH || "./logs/system.log",
 };

@@ -1,5 +1,5 @@
 import path from "path";
-import { promises as fs } from "fs";
+import fs from "fs"; // Standard fs, not promises
 import { DOTENV } from "./utils/dotenv";
 import { LogTypesEnum } from "./utils/enums/log-types.enum";
 
@@ -14,66 +14,64 @@ const colors = {
 };
 
 /**
- * Appends the log message to <log file>.log without ANSI colors
+ * Appends the log message to file synchronously
  */
-async function logFile(
+function logFile(
   logWithColor: string,
   logWithoutColor: string,
-): Promise<void> {
-  const filePath: string = DOTENV.LOG_FILE_PATH;
+): void {
+  const logEnabled: boolean = DOTENV.LOG_ENABLED;
 
-  try {
-    // Ensure the directory exists if the path is nested (e.g., ./logs/system.log)
-    const dir = path.dirname(filePath);
-    await fs.mkdir(dir, { recursive: true });
+  if (logEnabled) {
+    const filePath: string = DOTENV.LOG_FILE_PATH;
 
-    await fs.appendFile(filePath, logWithoutColor + "\n");
-  } catch (error) {
-    console.error("Error handling file operation:", error);
+    try {
+      const dir = path.dirname(filePath);
+      // Synchronous directory creation
+      fs.mkdirSync(dir, { recursive: true });
+      // Synchronous file append
+      fs.appendFileSync(filePath, logWithoutColor + "\n");
+    } catch (error) {
+      console.error("Error handling file operation:", error);
+    }
   }
   console.log(logWithColor);
 }
 
-// Format date & time
+// Format date & time (stays the same)
 function getFormattedDateTime(): string {
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-
-  return `[${year}-${month}-${day} - ${hours}:${minutes}:${seconds}]`;
+  return `[${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} - ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}]`;
 }
 
+// All log functions become regular functions (no async)
 function logError(message: string, location?: string): void {
-  const logWithColor: string = `${colors.GREEN}${getFormattedDateTime()} ${colors.RED}[${LogTypesEnum.ERROR}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor: string = `${getFormattedDateTime()} [${LogTypesEnum.ERROR}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.RED}[${LogTypesEnum.ERROR}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.ERROR}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
 
 function logWarning(message: string, location?: string): void {
-  const logWithColor: string = `${colors.GREEN}${getFormattedDateTime()} ${colors.YELLOW}[${LogTypesEnum.WARNING}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor: string = `${getFormattedDateTime()} [${LogTypesEnum.WARNING}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.YELLOW}[${LogTypesEnum.WARNING}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.WARNING}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
 
 function logInfo(message: string, location?: string): void {
-  const logWithColor: string = `${colors.GREEN}${getFormattedDateTime()} ${colors.GREEN}[${LogTypesEnum.INFO}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor: string = `${getFormattedDateTime()} [${LogTypesEnum.INFO}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.GREEN}[${LogTypesEnum.INFO}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.INFO}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
 
 function logAudit(message: string, location?: string): void {
-  const logWithColor: string = `${colors.GREEN}${getFormattedDateTime()} ${colors.CYAN}[${LogTypesEnum.AUDIT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor: string = `${getFormattedDateTime()} [${LogTypesEnum.AUDIT}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.CYAN}[${LogTypesEnum.AUDIT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.AUDIT}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
 
 function logEvent(message: string, location?: string): void {
-  const logWithColor: string = `${colors.GREEN}${getFormattedDateTime()} ${colors.MAGENTA}[${LogTypesEnum.EVENT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor: string = `${getFormattedDateTime()} [${LogTypesEnum.EVENT}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const logWithColor = `${colors.GREEN}${getFormattedDateTime()} ${colors.MAGENTA}[${LogTypesEnum.EVENT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
+  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.EVENT}]${location ? `\t - [${location}]` : ""} - ${message}`;
   logFile(logWithColor, logWithoutColor);
 }
 
