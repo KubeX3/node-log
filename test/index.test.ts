@@ -44,8 +44,12 @@ describe("Logger Utility (Synchronous)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mkdirSyncSpy = jest.spyOn(fs, "mkdirSync").mockImplementation(() => undefined as any);
-    appendFileSyncSpy = jest.spyOn(fs, "appendFileSync").mockImplementation(() => undefined as any);
+    mkdirSyncSpy = jest
+      .spyOn(fs, "mkdirSync")
+      .mockImplementation(() => undefined as any);
+    appendFileSyncSpy = jest
+      .spyOn(fs, "appendFileSync")
+      .mockImplementation(() => undefined as any);
     consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
     consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
@@ -57,58 +61,85 @@ describe("Logger Utility (Synchronous)", () => {
   describe("Formatting and Output Logs", () => {
     it("should correctly log an ERROR", () => {
       logError("Database failed");
-      expect(appendFileSyncSpy).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.stringMatching(new RegExp(`^${dateRegex.source} \\[ERROR\\] - Database failed\\n$`))
+      
+      // Fixed Regex: added \\s* inside the brackets to match centering spaces
+      const expectedUncolored = expect.stringMatching(
+        new RegExp(`^${dateRegex.source} \\[\\s*ERROR\\s*\\] - Database failed\\n$`)
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining(`${colors.RED}[ERROR]`));
+
+      expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expectedUncolored);
+      // Fixed: The terminal log now has spaces inside the brackets too
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[  ERROR  ]")
+      );
     });
 
     it("should correctly log a WARNING", () => {
       logWarning("Disk low", "Server");
-      expect(appendFileSyncSpy).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.stringMatching(new RegExp(`^${dateRegex.source} \\[WARNING\\]\\t - \\[Server\\] - Disk low\\n$`))
+      
+      const expectedUncolored = expect.stringMatching(
+        new RegExp(`^${dateRegex.source} \\[\\s*WARNING\\s*\\] - \\[Server\\] - Disk low\\n$`)
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining(`${colors.YELLOW}[WARNING]`));
+
+      expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expectedUncolored);
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[ WARNING ]")
+      );
     });
 
     it("should correctly log an INFO message", () => {
       logInfo("App started");
-      expect(appendFileSyncSpy).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.stringMatching(new RegExp(`^${dateRegex.source} \\[INFO\\] - App started\\n$`))
+      
+      const expectedUncolored = expect.stringMatching(
+        new RegExp(`^${dateRegex.source} \\[\\s*INFO\\s*\\] - App started\\n$`)
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining(`${colors.GREEN}[INFO]`));
+
+      expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expectedUncolored);
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[  INFO   ]")
+      );
     });
 
     it("should correctly log an AUDIT message", () => {
       logAudit("User logged in", "Auth");
+      
       const expected = expect.stringMatching(
-        new RegExp(`^${dateRegex.source} \\[AUDIT\\]\\t - \\[Auth\\] - User logged in\\n$`)
+        new RegExp(`^${dateRegex.source} \\[\\s*AUDIT\\s*\\] - \\[Auth\\] - User logged in\\n$`)
       );
+
       expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expected);
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining(`${colors.CYAN}[AUDIT]`));
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[  AUDIT  ]")
+      );
     });
 
     it("should correctly log an EVENT message", () => {
       logEvent("Backup completed");
+      
       const expected = expect.stringMatching(
-        new RegExp(`^${dateRegex.source} \\[EVENT\\] - Backup completed\\n$`)
+        new RegExp(`^${dateRegex.source} \\[\\s*EVENT\\s*\\] - Backup completed\\n$`)
       );
+
       expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expected);
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining(`${colors.MAGENTA}[EVENT]`));
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[  EVENT  ]")
+      );
     });
   });
 
   describe("File System Error Handling", () => {
     it("should catch and log an error if fs.mkdirSync fails", () => {
       const mockError = new Error("Disk Read Only");
-      mkdirSyncSpy.mockImplementationOnce(() => { throw mockError; });
+      mkdirSyncSpy.mockImplementationOnce(() => {
+        throw mockError;
+      });
 
       logInfo("Test error handling");
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Error handling file operation:", mockError);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Error handling file operation:",
+        mockError,
+      );
       expect(consoleLogSpy).toHaveBeenCalled(); // Should still print to terminal
     });
   });

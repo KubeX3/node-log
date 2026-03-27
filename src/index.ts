@@ -17,10 +17,7 @@ const colors = {
 /**
  * Appends the log message to file synchronously
  */
-function logFile(
-  logWithColor: string,
-  logWithoutColor: string,
-): void {
+function logFile(logWithColor: string, logWithoutColor: string): void {
   const logEnabled: boolean = DOTENV.LOG_ENABLED;
 
   if (logEnabled) {
@@ -45,34 +42,68 @@ function getFormattedDateTime(): string {
   return `[${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} - ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}]`;
 }
 
-// All log functions become regular functions (no async)
+/**
+ * Centers text inside brackets to a fixed width of 9 characters.
+ * Example: "INFO"    -> "[  INFO   ]"
+ * Example: "WARNING" -> "[ WARNING ]"
+ */
+function getPaddedType(type: string): string {
+  const width = 9; // Total width inside the brackets
+  const len = type.length;
+  const leftPadding = Math.floor((width - len) / 2);
+  const rightPadding = width - len - leftPadding;
+
+  return `[${" ".repeat(leftPadding)}${type}${" ".repeat(rightPadding)}]`;
+}
+
+// All log functions become regular functions
 function logError(message: string, location?: string): void {
-  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.RED}[${LogTypesEnum.ERROR}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.ERROR}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const type = getPaddedType(LogTypesEnum.ERROR);
+  const time = getFormattedDateTime();
+
+  const logWithColor = `${colors.GRAY}${time}${colors.RESET} ${colors.RED}${type}${colors.RESET}${location ? ` - ${colors.GRAY}[${location}]${colors.RESET}` : ""} - ${message}`;
+  const logWithoutColor = `${time} ${type}${location ? ` - [${location}]` : ""} - ${message}`;
+
   logFile(logWithColor, logWithoutColor);
 }
 
 function logWarning(message: string, location?: string): void {
-  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.YELLOW}[${LogTypesEnum.WARNING}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.WARNING}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const type = getPaddedType(LogTypesEnum.WARNING);
+  const time = getFormattedDateTime();
+
+  const logWithColor = `${colors.GRAY}${time}${colors.RESET} ${colors.YELLOW}${type}${colors.RESET}${location ? ` - ${colors.GRAY}[${location}]${colors.RESET}` : ""} - ${message}`;
+  const logWithoutColor = `${time} ${type}${location ? ` - [${location}]` : ""} - ${message}`;
+
   logFile(logWithColor, logWithoutColor);
 }
 
 function logInfo(message: string, location?: string): void {
-  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.GREEN}[${LogTypesEnum.INFO}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.INFO}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const type = getPaddedType(LogTypesEnum.INFO);
+  const time = getFormattedDateTime();
+
+  const logWithColor = `${colors.GRAY}${time}${colors.RESET} ${colors.GREEN}${type}${colors.RESET}${location ? ` - ${colors.GRAY}[${location}]${colors.RESET}` : ""} - ${message}`;
+  const logWithoutColor = `${time} ${type}${location ? ` - [${location}]` : ""} - ${message}`;
+
   logFile(logWithColor, logWithoutColor);
 }
 
 function logAudit(message: string, location?: string): void {
-  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.CYAN}[${LogTypesEnum.AUDIT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.AUDIT}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const type = getPaddedType(LogTypesEnum.AUDIT);
+  const time = getFormattedDateTime();
+
+  const logWithColor = `${colors.GRAY}${time}${colors.RESET} ${colors.CYAN}${type}${colors.RESET}${location ? ` - ${colors.GRAY}[${location}]${colors.RESET}` : ""} - ${message}`;
+  const logWithoutColor = `${time} ${type}${location ? ` - [${location}]` : ""} - ${message}`;
+
   logFile(logWithColor, logWithoutColor);
 }
 
 function logEvent(message: string, location?: string): void {
-  const logWithColor = `${colors.GRAY}${getFormattedDateTime()} ${colors.MAGENTA}[${LogTypesEnum.EVENT}]${location ? `\t - [${location}]` : ""}${colors.RESET} - ${message}`;
-  const logWithoutColor = `${getFormattedDateTime()} [${LogTypesEnum.EVENT}]${location ? `\t - [${location}]` : ""} - ${message}`;
+  const type = getPaddedType(LogTypesEnum.EVENT);
+  const time = getFormattedDateTime();
+
+  const logWithColor = `${colors.GRAY}${time}${colors.RESET} ${colors.MAGENTA}${type}${colors.RESET}${location ? ` - ${colors.GRAY}[${location}]${colors.RESET}` : ""} - ${message}`;
+  const logWithoutColor = `${time} ${type}${location ? ` - [${location}]` : ""} - ${message}`;
+
   logFile(logWithColor, logWithoutColor);
 }
 
