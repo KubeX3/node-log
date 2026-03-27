@@ -30,10 +30,21 @@ npm i @kubex3/node-log
 
 ## ⚙️ Configuration
 
-By default, logs are saved to `./logs/system.log`. You can easily override this by setting the `LOG_FILE_PATH` environment variable in your `.env` file.
+By default, file logging is <b>enabled</b> and logs are saved to `./logs/system.log`. You can control this behavior and override the storage location using environment variables.
 
+Configuration Options
+
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `LOG_ENABLED` | Set to `true` to write logs to a file, or `false` to only show them in the console." | `true` |
+| `LOG_FILE_PATH` | The relative or absolute path where the log file should be created. | `./logs/system.log` |
+
+### Example `.env` Setup
 ```env
-# .env
+# Enable or disable file logging (true/false)
+LOG_ENABLED=true
+
+# Custom location for your log files
 LOG_FILE_PATH=./src/storage/logs/application.log
 ```
 
