@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "A high-performance TypeScript logging utility that automatically manages directory creation and generates structured .log files with both ANSI-colored console output and clean, plain-text file persistence.",
   "main": "./dist/index.js",
+  "types": "dist/src/index.d.ts",
   "author": {
 		"name": "KubeX3",
 		"email": "kubex3.com@gmail.com"
