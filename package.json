@@ -1,9 +1,12 @@
 {
-  "name": "log",
+  "name": "@kubex3/node-log",
   "version": "0.0.0",
   "description": "A high-performance TypeScript logging utility that automatically manages directory creation and generates structured .log files with both ANSI-colored console output and clean, plain-text file persistence.",
   "main": "./dist/index.js",
-  "author": "KubeX3",
+  "author": {
+		"name": "KubeX3",
+		"email": "kubex3.com@gmail.com"
+	},
   "license": "Apache License",
   "type": "module",
   "scripts": {
@@ -24,6 +27,9 @@
     "ansi-colors",
     "automation"
   ],
+  "files": [
+		"dist"
+	],
   "homepage": "https://github.com/KubeX3/node-log#readme",
   "bugs": {
     "url": "https://github.com/KubeX3/node-log/issues"
