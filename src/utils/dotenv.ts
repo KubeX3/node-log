@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === "development") {
 
 const now = new Date();
 console.log(
-  "\x1b[90m[%s/%s/%s - %s:%s:%s] \x1b[32m[INFO] \x1b[37m- \x1b[90m[dotenv-local.ts] \x1b[37m- \x1b[37m%s",
+  "\x1b[90m[%s/%s/%s - %s:%s:%s] \x1b[32m[  INFO   ] \x1b[37m- \x1b[90m[dotenv-local.ts] \x1b[37m- \x1b[37m%s",
   now.getFullYear(),
   String(now.getMonth() + 1).padStart(2, "0"),
   String(now.getDate()).padStart(2, "0"),
@@ -20,6 +20,7 @@ console.log(
 );
 
 export const DOTENV = {
+  NODE_ENV: process.env.NODE_ENV || 'development',
   LOG_ENABLED:
     process.env.LOG_ENABLED === undefined
       ? true

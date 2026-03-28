@@ -107,4 +107,15 @@ function logEvent(message: string, location?: string): void {
   logFile(logWithColor, logWithoutColor);
 }
 
-export { logError, logWarning, logInfo, logAudit, logEvent };
+function logDebug(message: string, location?: string): void {
+  if (DOTENV.NODE_ENV === 'production') return; 
+  const type = getPaddedType(LogTypesEnum.DEBUG);
+  const time = getFormattedDateTime();
+
+  const logWithColor = `${colors.GRAY}${time}${colors.RESET} ${colors.RESET}${type}${colors.RESET}${location ? ` - ${colors.GRAY}[${location}]${colors.RESET}` : ""} - ${message}`;
+  const logWithoutColor = `${time} ${type}${location ? ` - [${location}]` : ""} - ${message}`;
+
+  logFile(logWithColor, logWithoutColor);
+}
+
+export { logError, logWarning, logInfo, logAudit, logEvent, logDebug };

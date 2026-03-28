@@ -22,6 +22,7 @@ import {
   logInfo,
   logAudit,
   logEvent,
+  logDebug,
 } from "../src/index";
 
 const colors = {
@@ -61,68 +62,109 @@ describe("Logger Utility (Synchronous)", () => {
   describe("Formatting and Output Logs", () => {
     it("should correctly log an ERROR", () => {
       logError("Database failed");
-      
+
       // Fixed Regex: added \\s* inside the brackets to match centering spaces
       const expectedUncolored = expect.stringMatching(
-        new RegExp(`^${dateRegex.source} \\[\\s*ERROR\\s*\\] - Database failed\\n$`)
+        new RegExp(
+          `^${dateRegex.source} \\[\\s*ERROR\\s*\\] - Database failed\\n$`,
+        ),
       );
 
-      expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expectedUncolored);
+      expect(appendFileSyncSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expectedUncolored,
+      );
       // Fixed: The terminal log now has spaces inside the brackets too
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining("[  ERROR  ]")
+        expect.stringContaining("[  ERROR  ]"),
       );
     });
 
     it("should correctly log a WARNING", () => {
       logWarning("Disk low", "Server");
-      
+
       const expectedUncolored = expect.stringMatching(
-        new RegExp(`^${dateRegex.source} \\[\\s*WARNING\\s*\\] - \\[Server\\] - Disk low\\n$`)
+        new RegExp(
+          `^${dateRegex.source} \\[\\s*WARNING\\s*\\] - \\[Server\\] - Disk low\\n$`,
+        ),
       );
 
-      expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expectedUncolored);
+      expect(appendFileSyncSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expectedUncolored,
+      );
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining("[ WARNING ]")
+        expect.stringContaining("[ WARNING ]"),
       );
     });
 
     it("should correctly log an INFO message", () => {
       logInfo("App started");
-      
+
       const expectedUncolored = expect.stringMatching(
-        new RegExp(`^${dateRegex.source} \\[\\s*INFO\\s*\\] - App started\\n$`)
+        new RegExp(`^${dateRegex.source} \\[\\s*INFO\\s*\\] - App started\\n$`),
       );
 
-      expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expectedUncolored);
+      expect(appendFileSyncSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expectedUncolored,
+      );
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining("[  INFO   ]")
+        expect.stringContaining("[  INFO   ]"),
       );
     });
 
     it("should correctly log an AUDIT message", () => {
       logAudit("User logged in", "Auth");
-      
+
       const expected = expect.stringMatching(
-        new RegExp(`^${dateRegex.source} \\[\\s*AUDIT\\s*\\] - \\[Auth\\] - User logged in\\n$`)
+        new RegExp(
+          `^${dateRegex.source} \\[\\s*AUDIT\\s*\\] - \\[Auth\\] - User logged in\\n$`,
+        ),
       );
 
-      expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expected);
+      expect(appendFileSyncSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expected,
+      );
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining("[  AUDIT  ]")
+        expect.stringContaining("[  AUDIT  ]"),
       );
     });
 
     it("should correctly log an EVENT message", () => {
       logEvent("Backup completed");
-      
+
       const expected = expect.stringMatching(
-        new RegExp(`^${dateRegex.source} \\[\\s*EVENT\\s*\\] - Backup completed\\n$`)
+        new RegExp(
+          `^${dateRegex.source} \\[\\s*EVENT\\s*\\] - Backup completed\\n$`,
+        ),
       );
 
-      expect(appendFileSyncSpy).toHaveBeenCalledWith(expect.any(String), expected);
+      expect(appendFileSyncSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expected,
+      );
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining("[  EVENT  ]")
+        expect.stringContaining("[  EVENT  ]"),
+      );
+    });
+
+    it("should correctly log an DEBUG message", () => {
+      logDebug("Before DB start");
+
+      const expected = expect.stringMatching(
+        new RegExp(
+          `^${dateRegex.source} \\[\\s*DEBUG\\s*\\] - Before DB start\\n$`,
+        ),
+      );
+
+      expect(appendFileSyncSpy).toHaveBeenCalledWith(
+        expect.any(String),
+        expected,
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[  DEBUG  ]"),
       );
     });
   });
