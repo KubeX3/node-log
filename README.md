@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/KubeX3/node-log/ci.yml?branch=main)](https://github.com/KubeX3/node-log/actions/workflows/publish.yml)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/KubeX3/node-log/ci.yml?branch=main)](https://github.com/KubeX3/node-log/actions/workflows/ci.yml)
+[![Socket Badge](https://badge.socket.dev/npm/package/@kubex3/node-log/1.3.1)](https://badge.socket.dev/npm/package/@kubex3/node-log/1.3.1)
 
 A high-performance TypeScript logging utility for modern Node.js (ESM) applications. It automatically manages directory creation and generates structured `.log` files with both ANSI-colored console output and clean, plain-text file persistence.
 
