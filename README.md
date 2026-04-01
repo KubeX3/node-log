@@ -83,9 +83,9 @@ logAudit("User password updated successfully", "AuthModule");
 ```txt
 [2026-03-27 - 14:30:15] [  INFO   ] - Server successfully started on port 3000
 [2026-03-27 - 14:30:15] [  EVENT  ] - Daily database backup triggered
-[2026-03-27 - 14:30:16] [ WARNING ]  - [SystemMonitor] - High memory usage detected
-[2026-03-27 - 14:30:16] [  ERROR  ]    - [CacheService] - Failed to connect to Redis cluster
-[2026-03-27 - 14:30:17] [  AUDIT  ]    - [AuthModule] - User password updated successfully
+[2026-03-27 - 14:30:16] [ WARNING ] - [SystemMonitor] - High memory usage detected
+[2026-03-27 - 14:30:16] [  ERROR  ] - [CacheService] - Failed to connect to Redis cluster
+[2026-03-27 - 14:30:17] [  AUDIT  ] - [AuthModule] - User password updated successfully
 ```
 
 ### 📄 File Output (system.log)
@@ -95,9 +95,9 @@ The exact same logs are safely appended to your `.log` file, stripped of ANSI co
 ```log
 [2026-03-27 - 14:30:15] [  INFO   ] - Server successfully started on port 3000
 [2026-03-27 - 14:30:15] [  EVENT  ] - Daily database backup triggered
-[2026-03-27 - 14:30:16] [ WARNING ]  - [SystemMonitor] - High memory usage detected
-[2026-03-27 - 14:30:16] [  ERROR  ]    - [CacheService] - Failed to connect to Redis cluster
-[2026-03-27 - 14:30:17] [  AUDIT  ]    - [AuthModule] - User password updated successfully
+[2026-03-27 - 14:30:16] [ WARNING ] - [SystemMonitor] - High memory usage detected
+[2026-03-27 - 14:30:16] [  ERROR  ] - [CacheService] - Failed to connect to Redis cluster
+[2026-03-27 - 14:30:17] [  AUDIT  ] - [AuthModule] - User password updated successfully
 ```
 
 ---
