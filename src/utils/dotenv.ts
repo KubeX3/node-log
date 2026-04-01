@@ -20,7 +20,7 @@ console.log(
 );
 
 export const DOTENV = {
-  NODE_ENV: process.env.NODE_ENV || 'development',
+  NODE_ENV: process.env.NODE_ENV || "development",
   LOG_ENABLED:
     process.env.LOG_ENABLED === undefined
       ? true

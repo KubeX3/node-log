@@ -108,7 +108,7 @@ function logEvent(message: string, location?: string): void {
 }
 
 function logDebug(message: string, location?: string): void {
-  if (DOTENV.NODE_ENV === 'production') return; 
+  if (DOTENV.NODE_ENV === "production") return;
   const type = getPaddedType(LogTypesEnum.DEBUG);
   const time = getFormattedDateTime();
 

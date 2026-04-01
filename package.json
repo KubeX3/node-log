@@ -5,9 +5,9 @@
   "main": "./dist/index.js",
   "types": "./dist/src/index.d.ts",
   "author": {
-		"name": "KubeX3",
-		"email": "kubex3.com@gmail.com"
-	},
+    "name": "KubeX3",
+    "email": "kubex3.com@gmail.com"
+  },
   "license": "Apache License",
   "type": "module",
   "scripts": {
@@ -29,8 +29,8 @@
     "automation"
   ],
   "files": [
-		"dist"
-	],
+    "dist"
+  ],
   "homepage": "https://github.com/KubeX3/node-log#readme",
   "bugs": {
     "url": "https://github.com/KubeX3/node-log/issues"
@@ -42,17 +42,14 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^25.5.0",
-    "@vitest/coverage-v8": "^4.1.2",
     "dotenv": "^17.3.1",
     "esbuild": "^0.27.4",
     "jest": "^30.3.0",
     "prettier": "^3.8.1",
-    "ts-jest": "^29.1.2",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.2",
-    "vite": "^8.0.3",
-    "vitest": "^4.1.2"
+    "typescript": "^6.0.2"
   },
   "overrides": {
     "ts-jest": {
