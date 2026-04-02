@@ -1,0 +1,65 @@
+name: Security Patch & Auto-Publish
+
+on:
+  schedule:
+    # Runs at 03:00 AM UTC every day
+    - cron: '0 3 * * *'
+  workflow_dispatch:  # Allows you to run it manually for testing
+
+jobs:
+  update-and-test:
+    runs-on: ubuntu-latest
+    outputs:
+      updated: ${{ steps.check-changes.outputs.changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Necessary for git tags/versioning
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://registry.npmjs.org/'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Fix high/critical vulnerabilities
+        run: npm audit fix --audit-level=high
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Tests
+        if: steps.check-changes.outputs.changed == 'true'
+        run: npm run test
+
+      - name: Build Project
+        if: steps.check-changes.outputs.changed == 'true'
+        run: npm run build
+
+      - name: Bump Patch Version
+        if: steps.check-changes.outputs.changed == 'true'
+        # This increments the x.x.[x] position automatically
+        run: npm version patch -m "chore: security patch version bump to %s"
+
+      - name: Push Changes and Tags
+        if: steps.check-changes.outputs.changed == 'true'
+        run: git push origin main --tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to npm
+        if: steps.check-changes.outputs.changed == 'true'
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
