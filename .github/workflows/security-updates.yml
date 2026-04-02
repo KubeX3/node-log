@@ -1,4 +1,4 @@
-name: Security Patch and Auto-Publish
+name: Security Patch & Auto-Publish
 
 on:
   schedule:
@@ -9,13 +9,12 @@ on:
 jobs:
   update-and-test:
     runs-on: ubuntu-latest
-    outputs:
-      updated: ${{ steps.check-changes.outputs.changed }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Necessary for git tags/versioning
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,16 +46,21 @@ jobs:
         if: steps.check-changes.outputs.changed == 'true'
         run: npm run build
 
+      - name: Configure Git
+        if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Bump Patch Version
         if: steps.check-changes.outputs.changed == 'true'
-        # This increments the x.x.[x] position automatically
         run: npm version patch -m "chore: security patch version bump to %s"
 
       - name: Push Changes and Tags
         if: steps.check-changes.outputs.changed == 'true'
-        run: git push origin main --tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push origin main
+          git push origin --tags
 
       - name: Publish to npm
         if: steps.check-changes.outputs.changed == 'true'
