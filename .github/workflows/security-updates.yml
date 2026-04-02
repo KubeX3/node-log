@@ -1,4 +1,4 @@
-name: Security Patch & Auto-Publish
+name: Security Patch and Auto-Publish
 
 on:
   schedule:
