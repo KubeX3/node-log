@@ -2,9 +2,8 @@ name: Security Patch & Auto-Publish
 
 on:
   schedule:
-    # Runs at 03:00 AM UTC every day
     - cron: '0 3 * * *'
-  workflow_dispatch:  # Allows you to run it manually for testing
+  workflow_dispatch:
 
 jobs:
   update-and-test:
