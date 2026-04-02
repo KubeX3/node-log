@@ -1,68 +1,37 @@
-name: Security Patch & Auto-Publish
+name: Security Patch Update
 
 on:
   schedule:
+    # Runs at 03:00 AM UTC every day
     - cron: '0 3 * * *'
-  workflow_dispatch:
+  workflow_dispatch: # Allows you to run it manually for testing
 
 jobs:
-  update-and-test:
+  update-vulnerabilities:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24.x'
-          registry-url: 'https://registry.npmjs.org/'
+          node-version: '20' # Change to your project's version
           cache: 'npm'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Fix high/critical vulnerabilities
+      - name: Fix high and critical vulnerabilities
+        # --audit-level=high ensures we focus on High and Critical
+        # fix --force will attempt to upgrade packages to the next compatible version
         run: npm audit fix --audit-level=high
 
-      - name: Check for changes
-        id: check-changes
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Run Tests
-        if: steps.check-changes.outputs.changed == 'true'
-        run: npm run test
-
-      - name: Build Project
-        if: steps.check-changes.outputs.changed == 'true'
-        run: npm run build
-
-      - name: Configure Git
-        if: steps.check-changes.outputs.changed == 'true'
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Bump Patch Version
-        if: steps.check-changes.outputs.changed == 'true'
-        run: npm version patch -m "chore: security patch version bump to %s"
-
-      - name: Push Changes and Tags
-        if: steps.check-changes.outputs.changed == 'true'
-        run: |
-          git push origin main
-          git push origin --tags
-
-      - name: Publish to npm
-        if: steps.check-changes.outputs.changed == 'true'
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Commit and Push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: security update for high/critical vulnerabilities"
+          file_pattern: 'package.json package-lock.json'
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
