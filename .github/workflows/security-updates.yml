@@ -6,6 +6,9 @@ on:
     - cron: '0 3 * * *'
   workflow_dispatch: # Allows you to run it manually for testing
 
+permissions:
+  contents: write  # This allows the bot to push commits
+
 jobs:
   update-vulnerabilities:
     runs-on: ubuntu-latest
